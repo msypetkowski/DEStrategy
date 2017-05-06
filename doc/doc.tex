@@ -14,12 +14,12 @@ An python library which implements DES algorithm desribed in detail in this arti
 
 \end{abstract}
 % pierwsza sekcja
-\section{General Algorithm Descripthon}\label{sec:general}
+\section{General Algorithm Description}\label{sec:general}
 
 $\lambda$ is initial population size.
 After each iteration algoritm maintains $\lambda$ individuals.
 At the beggining of an iteration, $\mu$ best individuals are selected.
-Next population is randomized in a way, so that result is similar (but different) to sampling $\lambda$ vectors with following covariance matrix:
+Next population is randomized in a way, so that result is similar (but different) to sampling $\lambda$ vectors with the mean $s$ and following covariance matrix:
 \begin{equation}
     D' = \frac{1}{\mu} \sum_{i=1}^{\mu} (O_i - m)(O_i - m)^T,
     \label{eqn:equa1}
@@ -28,7 +28,7 @@ where $O_i$ are individuals (vectors) from current populations, and $m$ is curre
 This is used in CMA-ES algorithm as covariance of covariance matrix a new population.
 DES don't use this matrix directly to generate new vectors like CMA-ES.
 
-To generate new individuals witch new covariance matrix $D'$, we can use following formula:
+To generate new individuals witch mean $s$ and new covariance matrix $D'$, we can use following formula:
 \begin{equation}
     x = s + \frac{1}{\sqrt2}(O_i - O_j) + a\Delta
 \end{equation}
