@@ -1,0 +1,59 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{english}
+\usepackage[utf8]{inputenc}
+\title{DEStrategy}
+\author{Michał Sypetkowski, Marcin Waszak}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+An python library which implements DES algorithm desribed in detail in this article: https://pzawistowski.github.io/assets/wae/DES.pdf.
+
+\end{abstract}
+% pierwsza sekcja
+\section{General Algorithm Descripthon}\label{sec:general}
+
+$\lambda$ is initial population size.
+After each iteration algoritm maintains $\lambda$ individuals.
+At the beggining of an iteration, $\mu$ best individuals are selected.
+Next population is randomized in a way, so that result is similar (but different) to sampling $\lambda$ vectors with following covariance matrix:
+\begin{equation}
+    D' = \frac{1}{\mu} \sum_{i=1}^{\mu} (O_i - m)(O_i - m)^T,
+    \label{eqn:equa1}
+\end{equation}
+where $O_i$ are individuals (vectors) from current populations, and $m$ is current population midpoint.
+This is used in CMA-ES algorithm as covariance of covariance matrix a new population.
+DES don't use this matrix directly to generate new vectors like CMA-ES.
+
+To generate new individuals witch new covariance matrix $D'$, we can use following formula:
+\begin{equation}
+    x = s + \frac{1}{\sqrt2}(O_i - O_j) + a\Delta
+\end{equation}
+where $s$ is midpoint of a population of best $mu$ individuals,
+$O_i$ and $O_j$ are individuals selected independently with uniform distribution from the population of best $\mu$ individuals,
+$a \sim N(0,1)$ is standardized scalar normal variate,
+and $\Delta=s-m$.
+
+DES algorithm modifies elements of this equasion.
+Factor $\frac{1}{\sqrt2}$ is replaced with constant T, which is a parameter of the algorithm.
+$O_i$ and $O_j$ are selected from best $\mu$ individuals of population $t-h$, where $t$ is current population number, and $h \sim U(0, ..., H-1)$
+$H$ constant is a parameter of the algorithm.
+$\Delta$ is accumulated shift of population midpoint
+($\Delta(t+1) \leftarrow (1-c)*\Delta(t)+c*(s(t)-m(t))$).
+$c$ is midpoint smootching factor.
+Additionally DES adds to new individual a noise proportional to current $\Delta$.
+
+To sum up, DES has 6 configurable parameters:
+\begin{enumerate}
+\item $\lambda$ - population size
+\item $\mu$ - offspring number
+\item $F$ - scaling factor
+\item $c$ - midpoint smootching factor.
+\item $H$ - time horizon for archive
+\item $\epsilon$ - noise intensity
+\end{enumerate}
+
+\end{document}
