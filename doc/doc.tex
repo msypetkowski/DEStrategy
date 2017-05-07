@@ -62,12 +62,12 @@ To sum up, DES has 6 configurable parameters:
 
 Boundary constraints are handled by a penalty function technique.
 Library will use by default quadratic penalty function that takes into account all coordinates for which boundary constraints are violated.
-Library also enables user to pass an custom penalty function.
+Library also enables user to pass a custom penalty function.
 
 \subsection{Stop criterion}\label{subsec:stop}
 User decides when to stop iteration.
-Library provides medium standard deviation of population (from medium point of previous population).
-Low value suggests that the changes are small and further iterations won't affect the result significantly.
+Library provides average standard deviation of population (from middle point of previous population).
+Low value suggests that the changes are small and further iterations would not affect the result significantly.
 
 \section{Python API}\label{sec:api}
 API consist of only one generator:
@@ -103,21 +103,17 @@ DEStrategy(
 \end{lstlisting}
 
 Generator yields tuples of 2 elements:
-Current population and medium standard deviation of population (see 1.3 Stop criterion)
+Current population and average standard deviation of population (see \ref{subsec:stop} subsection)
 
 Example usage:
 \begin{lstlisting}[language=Python]
-for population, meanStddev in DEStrategy(
+for population, avgStddev in DEStrategy(
         n=2,
         targetFun=lambda x,y: sin(x) + sin(y),
         boundaries=[(-1000, 1000), (-1000, 1000)],
         ):
     print("Current population:", population)
-    if meanStddev < 0.01:
+    if avgStddev < 0.01:
         break
 \end{lstlisting}
-
-
-
-
 \end{document}
