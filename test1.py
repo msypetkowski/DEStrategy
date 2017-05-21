@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 from des import DEStrategy
 from plotUtils import Fun2DPlot
 
