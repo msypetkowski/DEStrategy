@@ -36,12 +36,14 @@ class Fun2DPlot(BasePlot):
         self._p1 = plt.subplot(1, 1, 1)
         self._p1.pcolor(d, cmap=plt.get_cmap('seismic'),
                         vmin=-np.max(np.abs(d)), vmax=np.max(np.abs(d)))
+
         plt.show(False)
 
-    def update(self):
+    def update(self, population):
         super().update()
         samplesCount = self._samplesCount
 
+        self._p1.cla()
         samples = [[x / samplesCount, y / samplesCount]
                    for x, y in product(range(samplesCount), range(samplesCount))]
 
@@ -51,4 +53,15 @@ class Fun2DPlot(BasePlot):
         minVal = -maxVal
         self._p1.pcolor(d, cmap=plt.get_cmap('seismic'),
                         vmin=minVal, vmax=maxVal)
+
+        xs = []
+        ys = []
+        population_scaled = list(map(lambda x: x * samplesCount / 5, population))
+
+        for p in population_scaled:
+            xs.append(p[0])
+            ys.append(p[1])
+
+        self._p1.scatter(xs, ys, s=7, c='g')
+
         plt.pause(0.001)

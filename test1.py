@@ -19,6 +19,6 @@ for population, avgStddev in DEStrategy(
     print("Current population:")
     print('\n'.join(map(str,population)))
     print("Current standard deviation:", avgStddev)
-    # TODO: draw population on plot
-    plot.update()
+
+    plot.update(population)
     input()
