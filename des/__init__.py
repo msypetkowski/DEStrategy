@@ -26,7 +26,7 @@ def updatePopulation(population, factor, targetFun):
     Adaptation is n best from 2*n individuals
     (n with and n without mutation)
     '''
-    mutated = [p.copy() + gauss(0,factor)  for p in population]
+    mutated = [p.copy() + np.random.normal(0,factor,len(p))  for p in population]
     ret = population + mutated
     ret.sort(key=lambda x: targetFun(*x))
     return ret[0:len(population)]

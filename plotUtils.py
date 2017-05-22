@@ -47,7 +47,7 @@ class Fun2DPlot(BasePlot):
         samples = [[x / samplesCount, y / samplesCount]
                    for x, y in product(range(samplesCount), range(samplesCount))]
 
-        d = [[self._targetFun(x / samplesCount, y / samplesCount)
+        d = [[self._targetFun(y / samplesCount, x / samplesCount)
               for y in range(samplesCount)] for x in range(samplesCount)]
         maxVal = np.max(np.abs(d))
         minVal = -maxVal

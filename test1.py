@@ -15,9 +15,11 @@ for population, avgStddev in DEStrategy(
         n=5,
         targetFun=targetFun,
         boundaries=boundaries,
+        F=0.1,
         ):
     print("Current population:")
-    print('\n'.join(map(str,population)))
+    for p in population:
+        print(p, "result:", targetFun(*p))
     print("Current standard deviation:", avgStddev)
 
     plot.update(population)
