@@ -6,6 +6,7 @@ from plotUtils import Fun2DPlot
 from math import sin, cos
 import argparse
 
+
 def parseArguments():
     parser = argparse.ArgumentParser(
         description='Example 2D function minimum optimization problem.')
@@ -15,14 +16,16 @@ def parseArguments():
 
     return parser.parse_args()
 
+
 def des(plot, targetFun, boundaries):
     for population, avgStddev in DEStrategy(
             n=2,
             targetFun=lambda x: targetFun(*x),
             boundaries=boundaries,
-            F = 1/(2**0.5) - 0.04
-            # for 2 dimensions F=1/sqrt(2) won't cause converge (but it should?)
-            ):
+            F=1 / (2**0.5) - 0.04
+            # for 2 dimensions F=1/sqrt(2) won't cause converge (but it
+            # should?)
+    ):
         print('Current population:')
         for p in population:
             print(p, 'result:', targetFun(*p))
@@ -30,6 +33,7 @@ def des(plot, targetFun, boundaries):
 
         plot.update(population)
         input()
+
 
 def de(plot, targetFun, boundaries):
     def callback(*args, **kwargs):
@@ -40,18 +44,19 @@ def de(plot, targetFun, boundaries):
         input()
 
     opt.differential_evolution(
-            lambda x: targetFun(*x),
-            boundaries, popsize=8, callback=callback, disp=True, init='latinhypercube')
+        lambda x: targetFun(*x),
+        boundaries, popsize=8, callback=callback, disp=True, init='latinhypercube')
 
 if __name__ == '__main__':
     args = parseArguments()
 
-    def targetFun(x,y):
-        return (sin(x+x**2) + sin(y+x + 1)) * x * (5-x) * y * (5-y)
+    def targetFun(x, y):
+        return (sin(x + x**2) + sin(y + x + 1)) * x * (5 - x) * y * (5 - y)
 
     boundaries = [(0, 5), (0, 5)]
+
     def normalizedFun(*args):
-        return targetFun(*(a + arg*(b-a) for arg,(a,b) in zip(args,boundaries)))
+        return targetFun(*(a + arg * (b - a) for arg, (a, b) in zip(args, boundaries)))
 
     plot = Fun2DPlot(normalizedFun)
     if args.algorithm == 'DES':

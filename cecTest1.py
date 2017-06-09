@@ -61,5 +61,5 @@ def runDES():
             print('Current standard deviation:', avgStddev)
 
 if __name__ == '__main__':
-    runDE()
+    #runDE()
     runDES()

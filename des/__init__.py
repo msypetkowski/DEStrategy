@@ -3,6 +3,7 @@ import numpy as np
 from math import sqrt
 import random
 
+
 def randomizePopulation(lambd, boundaries):
     '''
     :return: new randomized population
@@ -11,16 +12,19 @@ def randomizePopulation(lambd, boundaries):
     return [np.array([uniform(*b) for b in boundaries])
             for i in range(lambd)]
 
+
 def estimateStdev(population, avgPoint):
     '''
     Return float with estimated standard deviation of a population.
     '''
-    ret = sum(abs(p-avgPoint) for p in population)/len(population)
+    ret = sum(abs(p - avgPoint) for p in population) / len(population)
     ret = sum(np.sqrt(ret)) / len(ret)
     return ret
 
+
 def averagePoint(population):
-    return sum(population)/len(population)
+    return sum(population) / len(population)
+
 
 def DEStrategy(
         n,
@@ -28,7 +32,7 @@ def DEStrategy(
 
         lambd=None,
         mu=None,
-        F=1/(2**0.5),
+        F=1 / (2**0.5),
         c=None,
         H=None,
         e=None,
@@ -53,8 +57,8 @@ def DEStrategy(
         e = 10 ** (-8) / sqrt(n)
 
     if initialPopulation is None and boundaries is None:
-            raise ValueError( "at least one of parameters:\n"
-                    "initialPopulation, boundaries should be not None")
+        raise ValueError("at least one of parameters:\n"
+                         "initialPopulation, boundaries should be not None")
 
     if initialPopulation is None:
         initialPopulation = randomizePopulation(lambd, boundaries)
@@ -84,13 +88,13 @@ def DEStrategy(
         muPopulation = population[0:mu]
         muAvgPoint = averagePoint(muPopulation)
 
-        delta = (1-c) * delta + c * (muAvgPoint - avgPoint)
+        delta = (1 - c) * delta + c * (muAvgPoint - avgPoint)
 
         newPopulation = []
         for i in range(lambd):
             oldPop = random.choice(populationHistory)
             ind1, ind2 = [random.choice(oldPop) for _ in range(2)]
-            d = F * (ind1 - ind2) + delta * sqrt(n) * random.gauss(0,1)
+            d = F * (ind1 - ind2) + delta * sqrt(n) * random.gauss(0, 1)
             newInd = muAvgPoint + d + e * np.random.normal(0, 1, n)
             newPopulation.append(newInd)
 
