@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 import scipy.optimize as opt
 from cec2013lsgo.cec2013 import Benchmark
-from des import DEStrategy
+from des import DEStrategy, randomizePopulation
 import multiprocessing
 import plotUtils
+import numpy as np
 
 bench = Benchmark()
 
-MAX_ITERATIONS = 10
+MAX_ITERATIONS = 20
 
 def runDEOneFunc(funcId):
     info = bench.get_info(funcId)
@@ -59,8 +60,8 @@ def runDESOneFunc(funcId):
             F=1 / (2**0.5) - 0.34,
             # F = 1/(2**0.5) # TODO: why won't converge
     ):
-        print(f'Current best score: {fun(best)}')
-        print('Current standard deviation:', avgStddev)
+        # print(f'Current best score: {fun(best)}')
+        # print('Current standard deviation:', avgStddev)
         result.append(fun(best))
         curIteration += 1
         if curIteration == MAX_ITERATIONS:
@@ -73,14 +74,34 @@ def runDES():
     pool = multiprocessing.Pool(4)
     return list(pool.map(runDESOneFunc, [id for id in range(1,5)]))
 
+def runRandomSamplingOneFunc(funcId):
+    info = bench.get_info(funcId)
+    fun = bench.get_function(funcId)
+    print(f"Test info: {info}")
+
+    boundaries = [(info['lower'], info['upper'])] * info['dimension']
+
+    result = []
+    best = float("inf")
+    for curIteration in range(MAX_ITERATIONS):
+        population = randomizePopulation(4*info['dimension'], boundaries)
+        best = min(best, min(map(fun, population)))
+        result.append(best)
+    return result
+
+def runRandomSampling():
+    print('--------------------------------')
+    print(f"Running runRandomSampling on CEC tests:")
+    pool = multiprocessing.Pool(4)
+    return list(pool.map(runRandomSamplingOneFunc, [id for id in range(1,5)]))
+
 if __name__ == '__main__':
     #results = (runDE(),runDES())
-    results = (runDE(), runDES())
+    results = (runDE(), runDES(), runRandomSampling())
     print(results)
     plots = []
     for res in zip(*results):
         assert(len(res) == len(results))
-        print("plot lines:", len(res))
         p = plotUtils.PlotHistory(len(res))
         p.update()
         for v in zip(*res):
