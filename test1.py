@@ -18,7 +18,7 @@ def parseArguments():
 
 
 def des(plot, targetFun, boundaries):
-    for population, avgStddev in DEStrategy(
+    for best, population, avgStddev in DEStrategy(
             n=2,
             targetFun=lambda x: targetFun(*x),
             boundaries=boundaries,
@@ -26,12 +26,14 @@ def des(plot, targetFun, boundaries):
             # for 2 dimensions F=1/sqrt(2) won't cause converge (but it
             # should?)
     ):
+        print(f"Best: {best} Score: {targetFun(*best)}")
         print('Current population:')
         for p in population:
             print(p, 'result:', targetFun(*p))
         print('Current standard deviation:', avgStddev)
 
-        plot.update(population)
+        #plot.update(population)
+        plot.update([best] + population)
         input()
 
 

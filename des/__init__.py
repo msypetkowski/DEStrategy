@@ -26,9 +26,15 @@ def averagePoint(population):
     return sum(population) / len(population)
 
 
+def inBounds(vec, bounds):
+    assert(len(vec) == len(bounds))
+    return all(down <= co <= up for co, (down, up) in zip(vec, bounds))
+
+
 def DEStrategy(
         n,
         targetFun,
+        boundaries,
 
         lambd=None,
         mu=None,
@@ -36,54 +42,93 @@ def DEStrategy(
         c=None,
         H=None,
         e=None,
-        penaltyFun=None,
         initialPopulation=None,
-        boundaries=None):
+):
+    """Finds the global minimum of a multivariate function.
+
+    Parameters
+    ----------
+    n : int
+        Problem dimensions.
+    targetFun : callable
+        The objective function to be minimized.  Must be in the form
+        ``f(x)``, where ``x`` is the argument in the form of a 1-D array.
+    lambd : int, optional
+        Quantity of population.  default 4 * n.
+    mu : int, optional
+        Quantity of best individuals selection.  Default lamd//2.
+    F : int, optional
+        Scaling factor. Dafault 1 / sqrt(2).
+    c : int, optional
+        Midpoint smootching factor. Default 4 / (n + 4)
+    H : int, optional
+        Time horizon for population archive. Default 6 + int(3 * sqrt(n))
+    e : int, optional
+        Noise intensity. Default 10 ** (-8) / sqrt(n).
+    initialPopulation : sequence, optional
+        List of lambd individuals.
+    boundaries : sequence
+        Bounds for variables.  ``(min, max)`` pairs for each element in ``x``,
+        defining the lower and upper bounds for the optimizing argument of
+        `func`. It is required to have ``len(bounds) == len(x) == n``.
+    """
 
     if lambd is None:
         lambd = 4 * n
+    assert(isinstance(lambd, int))
 
     if mu is None:
         mu = lambd // 2
+    assert(isinstance(mu, int))
 
     if c is None:
-        c = 4 // (n + 4)
+        c = 4 / (n + 4)
+    assert(isinstance(c, float))
 
     if H is None:
-        H = 6 + 3 * sqrt(n)
+        H = 6 + int(3 * sqrt(n))
+    assert(isinstance(H, int))
 
     if e is None:
         # TODO: make sure it's right
         e = 10 ** (-8) / sqrt(n)
-
-    if initialPopulation is None and boundaries is None:
-        raise ValueError("at least one of parameters:\n"
-                         "initialPopulation, boundaries should be not None")
+    assert(isinstance(e, float))
 
     if initialPopulation is None:
         initialPopulation = randomizePopulation(lambd, boundaries)
 
-    if penaltyFun is None:
-        def penaltyFun(x, qmax):
-            ret = qmax
-            for coord, (down, up) in zip(x, boundaries):
-                if coord > up:
-                    ret += (coord - up)**2
-                if coord < down:
-                    ret += (down - coord)**2
-            return ret
+    def penaltyFun(x, qmax):
+        anyOutside = False
+        ret = 0
+        for coord, (down, up) in zip(x, boundaries):
+            if coord > up:
+                anyOutside = True
+                ret += (coord - up)**2
+            if coord < down:
+                anyOutside = True
+                ret += (down - coord)**2
+        if anyOutside:
+            ret += qmax
+            ret -= targetFun(x)
+        return ret
+
+    def targetWithPenaltyFun(x, qmax):
+        return targetFun(x) + penaltyFun(x, qmax)
 
     iterationNumber = 0
     delta = 0
     population = initialPopulation
-    yield population, estimateStdev(population, averagePoint(population))
+    population.sort(key=lambda x: targetFun(x))
+    bestTillNow = population[0]
+    yield bestTillNow, population, estimateStdev(population, averagePoint(population))
     populationHistory = [population]
 
+    qmax = -float("inf")
+    qmax = max(qmax, max(map(targetFun, population)))
     while True:
         avgPoint = averagePoint(population)
 
-        qmax = max(map(targetFun, population))
-        population.sort(key=lambda x: targetFun(x) + penaltyFun(x, qmax))
+        population.sort(key=lambda x: targetWithPenaltyFun(x, qmax))
 
         muPopulation = population[0:mu]
         muAvgPoint = averagePoint(muPopulation)
@@ -96,10 +141,15 @@ def DEStrategy(
             ind1, ind2 = [random.choice(oldPop) for _ in range(2)]
             d = F * (ind1 - ind2) + delta * sqrt(n) * random.gauss(0, 1)
             newInd = muAvgPoint + d + e * np.random.normal(0, 1, n)
+            qmax = max(qmax, targetFun(newInd))
+            if targetWithPenaltyFun(newInd, qmax) < targetWithPenaltyFun(bestTillNow, qmax):
+                assert(penaltyFun(bestTillNow, qmax) == 0)
+                assert(inBounds(bestTillNow, boundaries))
+                bestTillNow = newInd
             newPopulation.append(newInd)
 
         population = newPopulation.copy()
-        yield population, estimateStdev(population, averagePoint(population))
+        yield bestTillNow, population, estimateStdev(population, averagePoint(population))
         populationHistory.append(population)
 
         if (len(populationHistory) > H):
