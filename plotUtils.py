@@ -65,3 +65,43 @@ class Fun2DPlot(BasePlot):
         self._p1.scatter(xs, ys, s=7, c='g')
 
         plt.pause(0.001)
+
+
+class PlotHistory(BasePlot):
+
+    def __init__(self, numberOfPlots):
+        super().__init__()
+
+        self._plots = [plt.plot([-10.0, 10.0], [-10.0, 10.0])[0]
+                       for i in range(numberOfPlots)]
+        self._data = [[] for i in range(numberOfPlots)]
+
+        plt.show(False)
+
+    def entry(self, values):
+        assert len(values) == len(self._plots)
+        assert len(values) == len(self._data)
+
+        for i in range(len(self._data)):
+            self._data[i].append(values[i])
+
+    def update(self):
+        super().update()
+
+        xData = list(range(len(self._data[0])))
+        for i, p in enumerate(self._plots):
+            #assert (isinstance(xData[0], int), isinstance(self._data[i][0],float))
+            assert len(xData) == len(self._data[i])
+            p.set_xdata(xData)
+            p.set_ydata(self._data[i])
+
+            ax = plt.gca()
+            # recompute the ax.dataLim
+            ax.relim()
+            # update ax.viewLim using the new dataLim
+            ax.autoscale_view()
+            plt.draw()
+
+        plt.autoscale(enable=True, axis='both', tight=True)
+
+        plt.pause(0.001)
