@@ -1,6 +1,6 @@
 from random import uniform, gauss
 import numpy as np
-from math import sqrt
+from math import sqrt, pi
 import random
 
 
@@ -73,6 +73,8 @@ def DEStrategy(
         `func`. It is required to have ``len(bounds) == len(x) == n``.
     """
 
+    smallDelta = sqrt(2/pi) * sqrt(n)
+
     if lambd is None:
         lambd = 4 * n
     assert(isinstance(lambd, int))
@@ -90,8 +92,7 @@ def DEStrategy(
     assert(isinstance(H, int))
 
     if e is None:
-        # TODO: make sure it's right
-        e = 10 ** (-8) / sqrt(n)
+        e = 10e-8 / smallDelta
     assert(isinstance(e, float))
 
     if initialPopulation is None:
@@ -139,7 +140,7 @@ def DEStrategy(
         for i in range(lambd):
             oldPop = random.choice(populationHistory)
             ind1, ind2 = [random.choice(oldPop) for _ in range(2)]
-            d = F * (ind1 - ind2) + delta * sqrt(n) * random.gauss(0, 1)
+            d = F * (ind1 - ind2) + delta * smallDelta * random.gauss(0, 1)
             newInd = muAvgPoint + d + e * np.random.normal(0, 1, n)
             qmax = max(qmax, targetFun(newInd))
             if targetWithPenaltyFun(newInd, qmax) < targetWithPenaltyFun(bestTillNow, qmax):

@@ -22,9 +22,7 @@ def des(plot, targetFun, boundaries):
             n=2,
             targetFun=lambda x: targetFun(*x),
             boundaries=boundaries,
-            F=1 / (2**0.5) - 0.04
-            # for 2 dimensions F=1/sqrt(2) won't cause converge (but it
-            # should?)
+            F=1 / (2**0.5)
     ):
         print(f"Best: {best} Score: {targetFun(*best)}")
         print('Current population:')

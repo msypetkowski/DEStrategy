@@ -15,6 +15,10 @@ class BasePlot:
     def update(self):
         plt.figure(self._figureId)
 
+    def save(self, name):
+        plt.figure(self._figureId)
+        plt.savefig(name)
+
     def __del__(self):
         try:
             plt.figure(self._figureId)

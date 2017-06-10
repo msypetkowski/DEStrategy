@@ -8,7 +8,9 @@ import numpy as np
 
 bench = Benchmark()
 
-MAX_ITERATIONS = 20
+MAX_ITERATIONS = 5
+CEC_TO_RUN = [1,2,3,4,5]
+THREADS_COUNT = 5
 
 def runDEOneFunc(funcId):
     info = bench.get_info(funcId)
@@ -36,13 +38,15 @@ def runDEOneFunc(funcId):
         strategy='rand1bin',
         # disp=True,
         init='latinhypercube')
+    if len(result) < MAX_ITERATIONS:
+        result += [result[-1]] * (MAX_ITERATIONS-len(result))
     return result
 
 def runDE():
     print('--------------------------------')
     print(f"Running DE on CEC tests:")
-    pool = multiprocessing.Pool(4)
-    return list(pool.map(runDEOneFunc, [id for id in range(1,5)]))
+    pool = multiprocessing.Pool(THREADS_COUNT)
+    return list(pool.map(runDEOneFunc, CEC_TO_RUN))
 
 def runDESOneFunc(funcId):
     info = bench.get_info(funcId)
@@ -57,8 +61,7 @@ def runDESOneFunc(funcId):
             n=info['dimension'],
             targetFun=fun,
             boundaries=boundaries,
-            F=1 / (2**0.5) - 0.34,
-            # F = 1/(2**0.5) # TODO: why won't converge
+            F=1 / (2**0.5)
     ):
         # print(f'Current best score: {fun(best)}')
         # print('Current standard deviation:', avgStddev)
@@ -71,8 +74,8 @@ def runDESOneFunc(funcId):
 def runDES():
     print('--------------------------------')
     print(f"Running DES on CEC tests:")
-    pool = multiprocessing.Pool(4)
-    return list(pool.map(runDESOneFunc, [id for id in range(1,5)]))
+    pool = multiprocessing.Pool(THREADS_COUNT)
+    return list(pool.map(runDESOneFunc, CEC_TO_RUN))
 
 def runRandomSamplingOneFunc(funcId):
     info = bench.get_info(funcId)
@@ -92,13 +95,18 @@ def runRandomSamplingOneFunc(funcId):
 def runRandomSampling():
     print('--------------------------------')
     print(f"Running runRandomSampling on CEC tests:")
-    pool = multiprocessing.Pool(4)
-    return list(pool.map(runRandomSamplingOneFunc, [id for id in range(1,5)]))
+    pool = multiprocessing.Pool(THREADS_COUNT)
+    return list(pool.map(runRandomSamplingOneFunc, CEC_TO_RUN))
 
 if __name__ == '__main__':
     #results = (runDE(),runDES())
     results = (runDE(), runDES(), runRandomSampling())
-    print(results)
+    for r in results:
+        for c in r:
+            print(c)
+        print()
+        print()
+
     plots = []
     for res in zip(*results):
         assert(len(res) == len(results))
@@ -110,4 +118,9 @@ if __name__ == '__main__':
             p.update()
         p.update()
         plots.append(p)
+    input()
+    for i, p in enumerate(plots):
+        p.save(f"cec2013_{str(i+1)}.eps")
+        p.save(f"cec2013_{str(i+1)}.svg")
+        p.save(f"cec2013_{str(i+1)}.png")
     input()
