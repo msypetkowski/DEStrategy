@@ -9,6 +9,8 @@
 \author{Michał Sypetkowski, Marcin Waszak}
 \date{}
 
+\definecolor{oranger}{rgb}{1,0.5,0}
+
 \begin{document}
 \maketitle
 
@@ -121,7 +123,7 @@ for best, population, avgStddev in DEStrategy(
 \section{Testing}\label{sec:testing}
 We performed tests on CEC 2013 benchmark optimization problems.
 X-axis is number of population, value is best individual score till current population.
-\textcolor{blue}{Blue} line is for DES, \textcolor{red}{Orange} for DE. \textcolor{green}{Green} for random sampling (for comparison).
+\textcolor{blue}{Blue} line is for DES, \textcolor{oranger}{Orange} for DE. \textcolor{green}{Green} for random sampling (for comparison).
 All these methods do 4 * dimensions target function samplings each iteration.
 This fact gives basis for this comparison.
 
