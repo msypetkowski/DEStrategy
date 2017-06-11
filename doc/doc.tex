@@ -80,6 +80,7 @@ DEStrategy(
     # obligatory parameters
     n,
     targetFun,
+    boundaries, # each dimension from -inf to +inf
 
     # optional parameters
     lambd=None, # default: 4*n
@@ -89,15 +90,11 @@ DEStrategy(
     H=None, # default: 6 + 3*sqrt(n)
     e=None, # default:
             # 10^(-8) / ExpectedLength(N(0,I))
-    penaltyFun=None, # default:
-                     # sum of squared trangressions
-                     # (for each dimension)
 
     # at least one of these is obligatory
     initialPopulation=None: # default:
                     # uniform random inside boundaries
-    boundaries=None, #default:
-                    # each dimension from -inf to +inf
+
 
 )
 
