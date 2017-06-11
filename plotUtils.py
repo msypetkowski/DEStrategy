@@ -106,6 +106,6 @@ class PlotHistory(BasePlot):
             ax.autoscale_view()
             plt.draw()
 
-        plt.autoscale(enable=True, axis='both', tight=True)
+        plt.autoscale(enable=True, axis='both')
 
         plt.pause(0.001)

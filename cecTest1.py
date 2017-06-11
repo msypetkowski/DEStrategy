@@ -9,8 +9,10 @@ import numpy as np
 bench = Benchmark()
 
 MAX_ITERATIONS = 5
-CEC_TO_RUN = [1,2,3,4,5]
-THREADS_COUNT = 5
+#CEC_TO_RUN = [1,2,6,7]
+# CEC_TO_RUN = [10,11,12,13]
+CEC_TO_RUN = [2,5,7,14]
+THREADS_COUNT = 4
 
 def runDEOneFunc(funcId):
     info = bench.get_info(funcId)
@@ -61,7 +63,8 @@ def runDESOneFunc(funcId):
             n=info['dimension'],
             targetFun=fun,
             boundaries=boundaries,
-            F=1 / (2**0.5)
+            H = 26,
+            F=1 / (2**0.5) - 0.1,
     ):
         # print(f'Current best score: {fun(best)}')
         # print('Current standard deviation:', avgStddev)
@@ -100,7 +103,7 @@ def runRandomSampling():
 
 if __name__ == '__main__':
     #results = (runDE(),runDES())
-    results = (runDE(), runDES(), runRandomSampling())
+    results = (runDES(), runDE(), runRandomSampling())
     for r in results:
         for c in r:
             print(c)
