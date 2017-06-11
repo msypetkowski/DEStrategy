@@ -4,6 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{listings}
 \usepackage{graphicx}
+\usepackage{color}
 \title{DEStrategy}
 \author{Michał Sypetkowski, Marcin Waszak}
 \date{}
@@ -118,10 +119,9 @@ for best, population, avgStddev in DEStrategy(
 
 
 \section{Testing}\label{sec:testing}
-
 We performed tests on CEC 2013 benchmark optimization problems.
 X-axis is number of population, value is best individual score till current population.
-Blue line is for DES, Orange for DE. Green for random sampling (for comparison).
+\textcolor{blue}{Blue} line is for DES, \textcolor{red}{Orange} for DE. \textcolor{green}{Green} for random sampling (for comparison).
 All these methods do 4 * dimensions target function samplings each iteration.
 This fact gives basis for this comparison.
 
@@ -157,7 +157,49 @@ On Figures 1 and 2, DES very fast found local or global minimum. We repeated the
 	\caption{optimization results for function no 14 from CEC 2013}
 \end{figure}
 
+\newpage
 \subsection{Other benchmarks}\label{subsec:other_testing}
-TODO
+
+Figures 5-8 represents results for 5, 10, 15, 20 dimentional custom function:
+\begin{lstlisting}[language=Python]
+def fun1(vec):
+    n = len(vec)
+    step = n % 7
+    ret = 0
+    for i,co1 in enumerate(chain(vec, vec, vec, vec)):
+        j = (i*10001 + 127) % 1001
+        for co2 in vec[i::step]:
+            ret += sin((co1 + co2 + j%17)*(j%7 + 1)) * (j%5 + 1)
+        for co2 in vec[i::-step]:
+            ret += cos((co1 + co2 + j%13)*(j%5 + 1)) * (j%7 + 2)
+    return ret
+\end{lstlisting}
+
+In this experiment, we can observe evolutionary properties of DE and DES - there are stable and dynamic periods.
+DES beats DE in more dimentional variants of this function.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{fun1_1.eps}
+	\caption{optimization results for custom 5 dimentional function}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{fun1_2.eps}
+	\caption{optimization results for custom 10 dimentional function}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{fun1_3.eps}
+	\caption{optimization results for custom 15 dimentional function}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{fun1_4.eps}
+	\caption{optimization results for custom 20 dimentional function}
+\end{figure}
 
 \end{document}

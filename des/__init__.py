@@ -146,6 +146,7 @@ def DEStrategy(
             if targetWithPenaltyFun(newInd, qmax) < targetWithPenaltyFun(bestTillNow, qmax):
                 assert(penaltyFun(bestTillNow, qmax) == 0)
                 assert(inBounds(bestTillNow, boundaries))
+                assert(inBounds(newInd, boundaries))
                 bestTillNow = newInd
             newPopulation.append(newInd)
 

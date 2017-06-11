@@ -2,6 +2,7 @@
 from des import DEStrategy
 import scipy.optimize as opt
 from plotUtils import Fun2DPlot
+from functions import fun1
 
 from math import sin, cos
 import argparse
@@ -50,8 +51,10 @@ def de(plot, targetFun, boundaries):
 if __name__ == '__main__':
     args = parseArguments()
 
-    def targetFun(x, y):
-        return (sin(x + x**2) + sin(y + x + 1)) * x * (5 - x) * y * (5 - y)
+    # def targetFun(x, y):
+    #     return (sin(x + x**2) + sin(y + x + 1)) * x * (5 - x) * y * (5 - y)
+    targetFun = fun1
+
 
     boundaries = [(0, 5), (0, 5)]
 

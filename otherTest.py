@@ -1,25 +1,33 @@
 #!/usr/bin/env python3
 import scipy.optimize as opt
-from cec2013lsgo.cec2013 import Benchmark
 from des import DEStrategy, randomizePopulation
 import multiprocessing
 import plotUtils
 import numpy as np
+from functions import fun1
 
-bench = Benchmark()
-
-MAX_ITERATIONS = 5
-#CEC_TO_RUN = [1,2,6,7]
-# CEC_TO_RUN = [10,11,12,13]
-CEC_TO_RUN = [2,5,7,14]
+MAX_ITERATIONS = 500
+FUNCTIONS = [
+    fun1,
+    fun1,
+    fun1,
+    fun1,
+]
+DIMENSION = [
+    5,
+    10,
+    15,
+    20,
+]
+BOUNDS = [
+    [(0,5)]*d for d in DIMENSION
+]
+FUNCTIONS_TO_RUN = [0,1,2,3]
 THREADS_COUNT = 4
 
 def runDEOneFunc(funcId):
-    info = bench.get_info(funcId)
-    fun = bench.get_function(funcId)
-    print(f"Test info: {info}")
-
-    boundaries = [(info['lower'], info['upper'])] * info['dimension']
+    fun = FUNCTIONS[funcId]
+    boundaries=BOUNDS[funcId]
 
     result = []
     curIteration = 0
@@ -46,25 +54,21 @@ def runDEOneFunc(funcId):
 
 def runDE():
     print('--------------------------------')
-    print(f"Running DE on CEC tests:")
+    print(f"Running DE:")
     pool = multiprocessing.Pool(THREADS_COUNT)
-    return list(pool.map(runDEOneFunc, CEC_TO_RUN))
+    return list(pool.map(runDEOneFunc, FUNCTIONS_TO_RUN))
 
 def runDESOneFunc(funcId):
-    info = bench.get_info(funcId)
-    fun = bench.get_function(funcId)
-    print(f"Test info: {info}")
-
-    boundaries = [(info['lower'], info['upper'])] * info['dimension']
+    fun = FUNCTIONS[funcId]
+    boundaries=BOUNDS[funcId]
 
     result = []
     curIteration = 0
     for best, population, avgStddev in DEStrategy(
-            n=info['dimension'],
+            n=DIMENSION[funcId],
             targetFun=fun,
             boundaries=boundaries,
-            H = 26,
-            F=1 / (2**0.5) - 0.1,
+            F=1 / (2**0.5) - 0.03,
     ):
         # print(f'Current best score: {fun(best)}')
         # print('Current standard deviation:', avgStddev)
@@ -76,30 +80,27 @@ def runDESOneFunc(funcId):
 
 def runDES():
     print('--------------------------------')
-    print(f"Running DES on CEC tests:")
+    print(f"Running DES:")
     pool = multiprocessing.Pool(THREADS_COUNT)
-    return list(pool.map(runDESOneFunc, CEC_TO_RUN))
+    return list(pool.map(runDESOneFunc, FUNCTIONS_TO_RUN))
 
 def runRandomSamplingOneFunc(funcId):
-    info = bench.get_info(funcId)
-    fun = bench.get_function(funcId)
-    print(f"Test info: {info}")
-
-    boundaries = [(info['lower'], info['upper'])] * info['dimension']
+    fun = FUNCTIONS[funcId]
+    boundaries=BOUNDS[funcId]
 
     result = []
     best = float("inf")
     for curIteration in range(MAX_ITERATIONS):
-        population = randomizePopulation(4*info['dimension'], boundaries)
+        population = randomizePopulation(4*DIMENSION[funcId], boundaries)
         best = min(best, min(map(fun, population)))
         result.append(best)
     return result
 
 def runRandomSampling():
     print('--------------------------------')
-    print(f"Running runRandomSampling on CEC tests:")
+    print(f"Running runRandomSampling:")
     pool = multiprocessing.Pool(THREADS_COUNT)
-    return list(pool.map(runRandomSamplingOneFunc, CEC_TO_RUN))
+    return list(pool.map(runRandomSamplingOneFunc, FUNCTIONS_TO_RUN))
 
 if __name__ == '__main__':
     #results = (runDE(),runDES())
@@ -123,7 +124,7 @@ if __name__ == '__main__':
         plots.append(p)
     input()
     for i, p in enumerate(plots):
-        p.save(f"cec2013_{str(i+1)}.eps")
-        p.save(f"cec2013_{str(i+1)}.svg")
-        p.save(f"cec2013_{str(i+1)}.png")
+        p.save(f"fun1_{str(i+1)}.eps")
+        p.save(f"fun1_{str(i+1)}.svg")
+        p.save(f"fun1_{str(i+1)}.png")
     input()
