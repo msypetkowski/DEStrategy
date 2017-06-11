@@ -100,42 +100,64 @@ DEStrategy(
 
 \end{lstlisting}
 
-Generator yields tuples of 2 elements:
-Current population and average standard deviation of population (see \ref{subsec:stop} subsection)
+Generator yields tuples of 3 elements:
+Best individual till now, current population and average standard deviation of population (see \ref{subsec:stop} subsection)
 
 Example usage:
 \begin{lstlisting}[language=Python]
-for population, avgStddev in DEStrategy(
+for best, population, avgStddev in DEStrategy(
         n=2,
         targetFun=lambda x,y: sin(x) + sin(y),
         boundaries=[(-1000, 1000), (-1000, 1000)],
         ):
+    print("Best till now:", best)
     print("Current population:", population)
     if avgStddev < 0.01:
         break
 \end{lstlisting}
 
+
+\section{Testing}\label{sec:testing}
+
+We performed tests on CEC 2013 benchmark optimization problems.
+X-axis is number of population, value is best individual score till current population.
+Blue line is for DES, Orange for DE. Green for random sampling (for comparison).
+All these methods do 4 * dimensions target function samplings each iteration.
+This fact gives basis for this comparison.
+
+\subsection{CEC 2013}\label{subsec:cec_testing}
+
+Figures 1-4 represents results for functions no 2,5,7,14 from this set.
+Each of these functions has 1000 dimensions.
+Because of small iteration number (it takes long time to compute), we decreased DES scaling factor F by 0.1 from default value.
+We also cut max iterations number to 128.
+On Figures 1 and 2, DES very fast found local or global minimum. We repeated these tests, and this property occurs very often.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.6]{cec2013_1.eps}
-	\caption{opis}
+	\caption{optimization results for function no 2 from CEC 2013}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.6]{cec2013_2.eps}
-	\caption{opis}
+	\caption{optimization results for function no 5 from CEC 2013}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.6]{cec2013_3.eps}
-	\caption{opis}
+	\caption{optimization results for function no 7 from CEC 2013}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.6]{cec2013_4.eps}
-	\caption{opis}
+	\caption{optimization results for function no 14 from CEC 2013}
 \end{figure}
+
+\subsection{Other benchmarks}\label{subsec:other_testing}
+TODO
+
 \end{document}

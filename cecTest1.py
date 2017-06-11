@@ -8,7 +8,7 @@ import numpy as np
 
 bench = Benchmark()
 
-MAX_ITERATIONS = 5
+MAX_ITERATIONS = 128
 #CEC_TO_RUN = [1,2,6,7]
 # CEC_TO_RUN = [10,11,12,13]
 CEC_TO_RUN = [2,5,7,14]
